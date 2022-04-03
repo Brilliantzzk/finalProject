@@ -33,8 +33,8 @@ app.use('/ad',adminsRouter);
 app.use('/user',usersRouter);
 app.use('/api',deviceRouter);
 app.use('/api',dataRouter);
-app.use('/api',topicRouter);
-app.use('/api',logRouter);
+app.use('/ad',topicRouter);
+app.use('/ad',logRouter);
 
 
 

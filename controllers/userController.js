@@ -1,4 +1,7 @@
 var db  = require('../utill/dbconfig')
+
+var id;
+
 const resObj = (code,data, msg) => {
   return {
     code: code,
@@ -47,8 +50,8 @@ getUserInfoById =function (req, res, next) { // 根据id查找user
 
 //增加用户函数
 addUserInfoById = function(req,res,next){ // 添加user
-  let {userName,password,level} = req.body
-  const sql = `insert into users(usrName,password,level)values( '${userName}','${password}','${level}')`
+  let {userName,password} = req.body
+  const sql = `insert into users(userName,password)values( '${userName}','${password}')`
   db.query(sql, function (result, fields) {
     if (fields !== undefined && result === null) {
       res.send(resObj(200,[], 'success'));
@@ -83,13 +86,13 @@ delUserInfoById = (req,res,next)=> { // 根据id删除user
 
 // //修改用户的处理函数
 updateUserInfoById = (req,res,next)=>{ // 根据id修改user
-  let {userId,userName,password,level} = req.body
+  let {userId,userName,password} = req.body
   const sql1 = `SELECT * FROM users where userId = ${userId}`
   db.query(sql1, [], function (result, fields) {
     console.log(result)
     if (result.length != 0) {
       // 需要注意'${name}'的引号必须要有，sql语句才能识别name字符串
-      const sql2 = `update users set userName = '${userName}', password ='${password}' ,level = '${level}'where userId = ${userId}` 
+      const sql2 = `update users set userName = '${userName}', password ='${password}'where userId = ${userId}` 
       db.query(sql2, [], function(result2, fields2){
         if (result2.length !==0) {
           res.send(resObj(200, req.body, '修改成功'));
@@ -141,15 +144,22 @@ userReg = (req, res) => {
   const sql1 = `SELECT * FROM users where userName = '${userName}' and password = '${password}'`
   db.query(sql1,[],function(result,fields){
     console.log(result)
+    console.log('-----------------')
     console.log(result.length)                  //判断空数组?
     if(result.length == 0){
-      res.send(resObj(202,[],'用户名或密码错误！'))
+      res.send(resObj(201,[],'用户名或密码错误！'))
     }else{
-      res.send(resObj(202,result[0].userName,'登录成功！'))
+      const sql2 =  `SELECT userId,userName FROM users where userName = '${userName}' and password = '${password}'`
+      db.query(sql2, [], function(result2, fields2){
+        if (result2 !== null) {   
+          console.log(result2)
+          res.send(resObj(200,result2,'登录成功'))
+        } 
+      })
     }
   })
  }
- 
+
    
 
 
@@ -209,5 +219,6 @@ module.exports = {
     userLogin,
     userReg,
     delUserInfoById,
-    updateUserInfoById
+    updateUserInfoById,
+
 }
