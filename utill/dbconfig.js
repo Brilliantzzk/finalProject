@@ -55,7 +55,8 @@ const dbConfig = {
     host: '127.0.0.1',
     user: 'root',
     password: '123456',
-    database: 'final'
+    database: 'final',
+    timezone: "08:00"//这是 Mysql时区 与 Node时区 不一致导致的。解决方法：配置Node数据库连接。加上 timezone 这一行：
 }
 
 
@@ -84,6 +85,7 @@ module.exports = {
             });
         });
     }
+
 };
 
 

@@ -11,6 +11,7 @@ var deviceRouter = require('./routes/device')
 var dataRouter = require('./routes/data')
 var topicRouter = require('./routes/topic')
 var logRouter = require('./routes/log')
+var mqttRouter = require('./client/client')
 
 var app = express();
 
@@ -33,9 +34,9 @@ app.use('/ad',adminsRouter);
 app.use('/user',usersRouter);
 app.use('/api',deviceRouter);
 app.use('/api',dataRouter);
-app.use('/ad',topicRouter);
+app.use('/api',topicRouter);
 app.use('/ad',logRouter);
-
+app.use('/mqtt',mqttRouter);
 
 
 server.listen('3000')

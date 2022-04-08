@@ -17,4 +17,4 @@ getLogInfo = (req, res, next) =>{ // 获取全部log信息
 
   module.exports = {
     getLogInfo
-  }
+  } 

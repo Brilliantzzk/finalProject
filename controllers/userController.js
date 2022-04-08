@@ -1,7 +1,5 @@
 var db  = require('../utill/dbconfig')
 
-var id;
-
 const resObj = (code,data, msg) => {
   return {
     code: code,
@@ -61,21 +59,20 @@ addUserInfoById = function(req,res,next){ // 添加user
   })
 }
 
-
-
-
 // //删除用户的处理函数
-delUserInfoById = (req,res,next)=> { // 根据id删除user
-  let userId = req.body.userId
+delUserById = (req,res,next)=> { // 根据id删除用户
+  let userId = req.query.userId
   const sql1 = `SELECT * FROM users where userId = ${userId}`
   db.query(sql1, [], function (result, fields) {
-    if (result.length != 0) {
+    console.log(result)
+    console.log(result.length)
+      if (result.length !== 0) {
       const sql2 = `delete from users where userId = ${userId}`
       db.query(sql2, [], function (result2, fields2) {
-        if (result2.length != 0) {
-          res.send(resObj(200,result2[0].usrname, '删除成功'));
+        if (result2.length !== 0) {
+          res.send(resObj(200, result, '删除成功'));
         } else {
-          res.send(resObj(201,result2[0].usrname, '删除失败'));
+          res.send(resObj(201, [], '删除失败'));
         }
       })
     } else {
@@ -84,25 +81,40 @@ delUserInfoById = (req,res,next)=> { // 根据id删除user
   })
 }
 
+
 // //修改用户的处理函数
 updateUserInfoById = (req,res,next)=>{ // 根据id修改user
   let {userId,userName,password} = req.body
-  const sql1 = `SELECT * FROM users where userId = ${userId}`
-  db.query(sql1, [], function (result, fields) {
-    console.log(result)
-    if (result.length != 0) {
-      // 需要注意'${name}'的引号必须要有，sql语句才能识别name字符串
-      const sql2 = `update users set userName = '${userName}', password ='${password}'where userId = ${userId}` 
-      db.query(sql2, [], function(result2, fields2){
-        if (result2.length !==0) {
-          res.send(resObj(200, req.body, '修改成功'));
-        } else {
-          res.send(resObj(201, [], '修改失败'));
-        }
-      })
-    } else {
-      res.send(resObj(202, [], '无此id!'));
+  console.log(req.body)
+  // 判断数据是否合法
+  if (!req.body.userName || !req.body.password) {
+    return res.send(resObj(201, [], '用户名或密码不能为空!'));
     }
+ 
+  //定义SQL 语句，查询用户名是否被占用
+  const sql = `select * from users where userName = '${userName}'`
+  db.query(sql,[],function(result,fields){
+    // 判段用户名是否被占用（由于select结果为数组，通过判断数组长度，如果查到，则证明有该用户名，数组长不为0）
+    if (result.length > 0) {
+      return res.send(resObj(201, [], '用户名被占用，请更换其他用户名!'));
+    }
+    const sql1 = `SELECT * FROM users where userId = ${userId}`
+    db.query(sql1, [], function (result, fields) {
+      console.log(result)
+      if (result.length != 0) {
+        // 需要注意'${name}'的引号必须要有，sql语句才能识别name字符串
+        const sql2 = `update users set userName = '${userName}', password ='${password}'where userId = ${userId}` 
+        db.query(sql2, [], function(result2, fields2){
+          if (result2.length !==0) {
+            res.send(resObj(200, req.body, '修改成功'));
+          } else {
+            res.send(resObj(201, [], '修改失败'));
+          }
+        })
+      } else {
+        res.send(resObj(202, [], '无此id!'));
+      }
+    })
   })
 }
 
@@ -114,7 +126,7 @@ userReg = (req, res) => {
     console.log(req.body)
     // 判断数据是否合法
     if (!req.body.userName || !req.body.password) {
-      return res.send({ status: 1, message: '用户名或密码不能为空！' })
+      return  res.send(resObj(201, [], '用户名或密码不能为空!'));
       }
    
     //定义SQL 语句，查询用户名是否被占用
@@ -122,7 +134,7 @@ userReg = (req, res) => {
     db.query(sql,[],function(result,fields){
       // 判段用户名是否被占用（由于select结果为数组，通过判断数组长度，如果查到，则证明有该用户名，数组长不为0）
       if (result.length > 0) {
-        return res.send({ status: 1, message: '用户名被占用，请更换其他用户名！' })
+        return res.send(resObj(201, [], '用户名被占用，请更换其他用户名!'));
       }
       
       const sql = `insert into users(userName,password)values( '${userName}','${password}')`
@@ -130,7 +142,12 @@ userReg = (req, res) => {
         //console.log(result)  result 返回结果
         //console.log(fields) 数据库相关 的
         if (fields !== undefined && result === null) {
-          res.send(resObj(200,req.body, '注册成功'));
+          const sql2 = `select * from users where userName = '${userName}' and password = '${password}'`
+          db.query(sql2,[], function (result2, fields) {
+            console.log(result2) 
+            if(result2!='')
+            res.send(resObj(200,result2, '注册成功'));
+          }) 
         } else {
           res.send(resObj(201,[], 'fail'));
         }
@@ -160,65 +177,13 @@ userReg = (req, res) => {
   })
  }
 
-   
-
-
-// //获取用户信息
-// let getUser = (username) => {
-//   let sql = `select * from users where userid=?`;
-//   let sqlArr = [username];
-//   return dbConfig.SySqlConnect(sql, sqlArr);
-// }
-
-// //获取注册的用户详情
-// let getUserInfoS = (userid) => {
-//   let sql = `select * from users where userid=?`;
-//   let sqlArr = [userid];
-//   return dbConfig.SySqlConnect(sql, sqlArr);
-// }
-
-// //判断是否有改用户用户详情
-// let findUserInfo = async(userid)=>{
-//   let sql =  "select * from users where userid= ?"
-//   let sqlArr = [userid]
-//   let res = await dbConfig.SySqlConnect(sql,sqlArr)
-//   if(res.length){
-//     return true
-//   }
-//   return false
-// }
-
-// //修改用户详情
-// let setUserInfo = async(userid,username,password)=>{
-//   if(findUserInfo(userid)){
-//     let sql = 'update users set username=?,password=? where userid = ?'
-//     //被传入的值
-//     let sqlArr = [username,password,userid]
-//     //调用方法返回
-//     let res = await dbConfig.SySqlConnect(sql,sqlArr)
-//     if(res.affectedRows == 1){
-//       let user = await getUser(userid)
-//       let userinfo = await getUserInfoS(userid)
-//       user[0].userinfo = userinfo[0]
-//       return user
-//     }else{
-//       return false
-//     } 
-//   }else{
-//     console.log("未找到")
-//   }
-// }
-
-
-
-
 module.exports = {
     getUserInfo,
     getUserInfoById,
     //getUserInfoByName,
     userLogin,
     userReg,
-    delUserInfoById,
+    delUserById,
     updateUserInfoById,
 
 }
