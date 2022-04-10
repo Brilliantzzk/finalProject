@@ -154,10 +154,14 @@ userReg = (req, res) => {
       })
     })
   }
-  
   // 登录的处理函数
  userLogin = (req, res,next) => {
   let{userName,password} = req.body
+  console.log(req.body)
+  console.log(userName)
+  console.log('-----------------')
+  console.log(req.body.userName)
+  console.log('-----------------')
   const sql1 = `SELECT * FROM users where userName = '${userName}' and password = '${password}'`
   db.query(sql1,[],function(result,fields){
     console.log(result)

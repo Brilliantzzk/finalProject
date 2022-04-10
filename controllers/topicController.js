@@ -8,6 +8,14 @@ const resObj = (code,data, msg) => {
   }
 }
 
+// 获取全部主题信息
+admingetTopicInfo = (req, res, next) =>{ 
+  const sql = `SELECT * FROM topicinf`
+  db.query(sql, [], function (result, fields) {
+    res.send(resObj(200,result, 'success'));
+  })
+}
+
 // 获取全部主题信息（传入userId、topic）
 getTopicInfo = (req, res, next) =>{ 
   let userId = req.query.userId
@@ -90,4 +98,5 @@ updateTopInfo = (req,res,next)=>{ // 根据id修改
     addTopicInfo,
     delTopInfo,
     updateTopInfo,
+    admingetTopicInfo
   }

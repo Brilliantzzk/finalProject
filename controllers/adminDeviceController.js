@@ -8,28 +8,27 @@ const resObj = (code,data, msg) => {
   }
 }
 
-// //获取设备所有信息
-// getDevInfo = (req, res, next) =>{ // 获取全部信息
-//   let userId = req.query.userId
-//   const sql = `SELECT * FROM deviceinf`
-//   db.query(sql, [], function (result, fields) {
-//     res.send(resObj(200,result, 'success'));
-//   })
-// }
+//获取设备所有信息
+adminGetDevInfo = (req, res, next) =>{ // 获取全部信息
+  const sql = `SELECT * FROM deviceinf`
+  db.query(sql, [], function (result, fields) {
+    res.send(resObj(200,result, 'success'));
+  })
+}
 
 
-// //获取指定id的设备信息
-// getDevInfoById = function (req, res, next) { // 根据id查找device
-//   let deviceId = req.query.deviceId
-//   const sql1 = `SELECT * FROM deviceinf where deviceId = ${deviceId} `
-//   db.query(sql1, [], function (result, fields) {
-//     if(result!='')
-//     res.send(resObj(200,result, 'success'));
-//     else{
-//       res.send(resObj(202,result, '未查到该设备'));
-//     }
-//   })
-// }
+//获取指定id的设备信息
+adminGetDevInfoById = function (req, res, next) { // 根据id查找device
+  let deviceId = req.query.deviceId
+  const sql1 = `SELECT * FROM deviceinf where deviceId = ${deviceId} `
+  db.query(sql1, [], function (result, fields) {
+    if(result!='')
+    res.send(resObj(200,result, 'success'));
+    else{
+      res.send(resObj(202,result, '未查到该设备'));
+    }
+  })
+}
 
 //获取用户及其拥有的设备信息
 getUserDeviceInfo = (req, res, next) =>{ 
@@ -106,10 +105,11 @@ updateDevice = (req,res,next)=>{ // 根据id修改
 }
 
 module.exports = {
-    // getDevInfo,
-    // getDevInfoById,
-    getUserDeviceInfo,
-    delDevInfoById,
-    updateDevice,
-    addDevice,
+  adminGetDevInfo,
+  adminGetDevInfoById,
+  getUserDeviceInfo,
+  delDevInfoById,
+  updateDevice,
+  addDevice,
+  addDevice,
 }

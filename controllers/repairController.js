@@ -30,7 +30,7 @@ getRepairInfoBySta = (req, res, next) =>{
 addRepairInfo = (req,res,next)=>{     
     //处理时间
     // var date = new Date();//将当前时间保存为初始值
-    var date1 = new Date().toLocaleString()//将当前时间保存为初始值并转换为本地时间
+    var date1 = new Date().toLocaleString("zh-CN",{hour12:false})//将当前时间保存为初始值并转换为本地时间
     // var year = date.getFullYear();
     // var month = date.getMonth();
     // var day = date.getDay();
@@ -45,12 +45,12 @@ addRepairInfo = (req,res,next)=>{
     // }
     // var sqlTime = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
     // console.log(date);
-    // console.log(date1);
+     console.log(date1);
     // console.log(sqlTime);
   
     let {deviceId,repairText} = req.body
     console.log(req.body)
-    const sql1 = `insert into repairinf(deviceId,repairTime,repairText,repairSta)values(${deviceId},'${date1}','${repairText}',0)`
+    const sql1 = `INSERT INTO repairinf(deviceId,repairTime,repairText,repairSta)VALUES(${deviceId},'${date1}','${repairText}',0)`
     db.query(sql1, function (result, fields) {
       if (fields !== undefined && result === null) {
         const sql2 =  `SELECT * FROM repairinf where repairTime = '${date1}' and deviceId = ${deviceId}`

@@ -7,7 +7,7 @@ const resObj = (code,data, msg) => {
     msg: msg
   }
 }
-//获取全部data信息 （传入userId）
+//获取全部data信息 （传入userId获取）
 getDataInfo = (req, res, next) =>{ 
   let userId = req.query.userId
   const sql = `SELECT * FROM appdatainf where deviceId in (SELECT deviceId FROM userdeviceinf where userId =  ${userId})`
@@ -15,6 +15,7 @@ getDataInfo = (req, res, next) =>{
       res.send(resObj(200,result, 'success'));
     })
   }
+
 
   //获取指定设备的id的数据信息（传入用户ID 设备ID）
 getDataInfoById =function (req, res, next) { // 根据id查找data

@@ -12,6 +12,7 @@ var dataRouter = require('./routes/data')
 var topicRouter = require('./routes/topic')
 var logRouter = require('./routes/log')
 var mqttRouter = require('./client/client')
+var groupAddr = require('./routes/groupAddr')
 
 var app = express();
 
@@ -37,6 +38,7 @@ app.use('/api',dataRouter);
 app.use('/api',topicRouter);
 app.use('/ad',logRouter);
 app.use('/mqtt',mqttRouter);
+app.use('/api',groupAddr);
 
 
 server.listen('3000')
